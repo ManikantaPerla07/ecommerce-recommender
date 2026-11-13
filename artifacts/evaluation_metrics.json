@@ -1,0 +1,368 @@
+{
+  "metadata": {
+    "test_events": 2990,
+    "num_test_users": 469,
+    "num_warm_users": 316,
+    "num_cold_users": 153,
+    "catalog_size": 250,
+    "k_values": [
+      5,
+      10,
+      20
+    ]
+  },
+  "overall": {
+    "Popularity Baseline": {
+      "K=5": {
+        "Precision@K": 0.0695,
+        "Recall@K": 0.1019,
+        "NDCG@K": 0.0941,
+        "MAP@K": 0.0562,
+        "CatalogCoverage@K": 0.048,
+        "Novelty@K": 5.1445,
+        "EvaluatedUsers": 469
+      },
+      "K=10": {
+        "Precision@K": 0.058,
+        "Recall@K": 0.1592,
+        "NDCG@K": 0.1149,
+        "MAP@K": 0.0623,
+        "CatalogCoverage@K": 0.08,
+        "Novelty@K": 5.4686,
+        "EvaluatedUsers": 469
+      },
+      "K=20": {
+        "Precision@K": 0.0472,
+        "Recall@K": 0.2597,
+        "NDCG@K": 0.1492,
+        "MAP@K": 0.0724,
+        "CatalogCoverage@K": 0.128,
+        "Novelty@K": 5.9561,
+        "EvaluatedUsers": 469
+      }
+    },
+    "Collaborative Filtering (SVD)": {
+      "K=5": {
+        "Precision@K": 0.038,
+        "Recall@K": 0.0711,
+        "NDCG@K": 0.0602,
+        "MAP@K": 0.0394,
+        "CatalogCoverage@K": 0.492,
+        "Novelty@K": 7.2882,
+        "EvaluatedUsers": 469
+      },
+      "K=10": {
+        "Precision@K": 0.0341,
+        "Recall@K": 0.1285,
+        "NDCG@K": 0.0829,
+        "MAP@K": 0.0472,
+        "CatalogCoverage@K": 0.612,
+        "Novelty@K": 7.4242,
+        "EvaluatedUsers": 469
+      },
+      "K=20": {
+        "Precision@K": 0.0245,
+        "Recall@K": 0.1831,
+        "NDCG@K": 0.1009,
+        "MAP@K": 0.052,
+        "CatalogCoverage@K": 0.74,
+        "Novelty@K": 7.5983,
+        "EvaluatedUsers": 469
+      }
+    },
+    "Content-Based (TF-IDF)": {
+      "K=5": {
+        "Precision@K": 0.0426,
+        "Recall@K": 0.0645,
+        "NDCG@K": 0.0575,
+        "MAP@K": 0.0334,
+        "CatalogCoverage@K": 0.96,
+        "Novelty@K": 9.3817,
+        "EvaluatedUsers": 469
+      },
+      "K=10": {
+        "Precision@K": 0.0456,
+        "Recall@K": 0.1305,
+        "NDCG@K": 0.0848,
+        "MAP@K": 0.0419,
+        "CatalogCoverage@K": 0.996,
+        "Novelty@K": 9.2406,
+        "EvaluatedUsers": 469
+      },
+      "K=20": {
+        "Precision@K": 0.0448,
+        "Recall@K": 0.2427,
+        "NDCG@K": 0.1247,
+        "MAP@K": 0.0533,
+        "CatalogCoverage@K": 1.0,
+        "Novelty@K": 9.1914,
+        "EvaluatedUsers": 469
+      }
+    },
+    "Hybrid Recommender": {
+      "K=5": {
+        "Precision@K": 0.0853,
+        "Recall@K": 0.1215,
+        "NDCG@K": 0.1183,
+        "MAP@K": 0.0737,
+        "CatalogCoverage@K": 0.916,
+        "Novelty@K": 7.3257,
+        "EvaluatedUsers": 469
+      },
+      "K=10": {
+        "Precision@K": 0.0776,
+        "Recall@K": 0.2223,
+        "NDCG@K": 0.1545,
+        "MAP@K": 0.0855,
+        "CatalogCoverage@K": 0.98,
+        "Novelty@K": 7.2227,
+        "EvaluatedUsers": 469
+      },
+      "K=20": {
+        "Precision@K": 0.0649,
+        "Recall@K": 0.3564,
+        "NDCG@K": 0.2009,
+        "MAP@K": 0.0997,
+        "CatalogCoverage@K": 1.0,
+        "Novelty@K": 7.2527,
+        "EvaluatedUsers": 469
+      }
+    }
+  },
+  "cold_start": {
+    "Popularity Baseline": {
+      "K=5": {
+        "Precision@K": 0.1307,
+        "Recall@K": 0.1587,
+        "NDCG@K": 0.1693,
+        "MAP@K": 0.0999,
+        "CatalogCoverage@K": 0.024,
+        "Novelty@K": 5.0617,
+        "EvaluatedUsers": 153
+      },
+      "K=10": {
+        "Precision@K": 0.1078,
+        "Recall@K": 0.2371,
+        "NDCG@K": 0.1925,
+        "MAP@K": 0.1033,
+        "CatalogCoverage@K": 0.044,
+        "Novelty@K": 5.3789,
+        "EvaluatedUsers": 153
+      },
+      "K=20": {
+        "Precision@K": 0.0876,
+        "Recall@K": 0.3826,
+        "NDCG@K": 0.2432,
+        "MAP@K": 0.1196,
+        "CatalogCoverage@K": 0.088,
+        "Novelty@K": 5.8434,
+        "EvaluatedUsers": 153
+      }
+    },
+    "Collaborative Filtering (SVD)": {
+      "K=5": {
+        "Precision@K": 0.0092,
+        "Recall@K": 0.0171,
+        "NDCG@K": 0.0144,
+        "MAP@K": 0.0093,
+        "CatalogCoverage@K": 0.16,
+        "Novelty@K": 7.3551,
+        "EvaluatedUsers": 153
+      },
+      "K=10": {
+        "Precision@K": 0.0065,
+        "Recall@K": 0.0214,
+        "NDCG@K": 0.0163,
+        "MAP@K": 0.01,
+        "CatalogCoverage@K": 0.272,
+        "Novelty@K": 7.4287,
+        "EvaluatedUsers": 153
+      },
+      "K=20": {
+        "Precision@K": 0.0039,
+        "Recall@K": 0.0268,
+        "NDCG@K": 0.018,
+        "MAP@K": 0.0106,
+        "CatalogCoverage@K": 0.42,
+        "Novelty@K": 7.4757,
+        "EvaluatedUsers": 153
+      }
+    },
+    "Content-Based (TF-IDF)": {
+      "K=5": {
+        "Precision@K": 0.0588,
+        "Recall@K": 0.0619,
+        "NDCG@K": 0.0699,
+        "MAP@K": 0.0393,
+        "CatalogCoverage@K": 0.276,
+        "Novelty@K": 9.6643,
+        "EvaluatedUsers": 153
+      },
+      "K=10": {
+        "Precision@K": 0.0725,
+        "Recall@K": 0.1433,
+        "NDCG@K": 0.1057,
+        "MAP@K": 0.0497,
+        "CatalogCoverage@K": 0.428,
+        "Novelty@K": 9.2838,
+        "EvaluatedUsers": 153
+      },
+      "K=20": {
+        "Precision@K": 0.0801,
+        "Recall@K": 0.3098,
+        "NDCG@K": 0.1694,
+        "MAP@K": 0.0689,
+        "CatalogCoverage@K": 0.76,
+        "Novelty@K": 9.0641,
+        "EvaluatedUsers": 153
+      }
+    },
+    "Hybrid Recommender": {
+      "K=5": {
+        "Precision@K": 0.1712,
+        "Recall@K": 0.1909,
+        "NDCG@K": 0.2095,
+        "MAP@K": 0.1279,
+        "CatalogCoverage@K": 0.164,
+        "Novelty@K": 5.224,
+        "EvaluatedUsers": 153
+      },
+      "K=10": {
+        "Precision@K": 0.1451,
+        "Recall@K": 0.3238,
+        "NDCG@K": 0.2489,
+        "MAP@K": 0.1388,
+        "CatalogCoverage@K": 0.244,
+        "Novelty@K": 5.5739,
+        "EvaluatedUsers": 153
+      },
+      "K=20": {
+        "Precision@K": 0.117,
+        "Recall@K": 0.4777,
+        "NDCG@K": 0.3055,
+        "MAP@K": 0.1587,
+        "CatalogCoverage@K": 0.352,
+        "Novelty@K": 6.0673,
+        "EvaluatedUsers": 153
+      }
+    }
+  },
+  "warm": {
+    "Popularity Baseline": {
+      "K=5": {
+        "Precision@K": 0.0399,
+        "Recall@K": 0.0744,
+        "NDCG@K": 0.0577,
+        "MAP@K": 0.035,
+        "CatalogCoverage@K": 0.048,
+        "Novelty@K": 5.1846,
+        "EvaluatedUsers": 316
+      },
+      "K=10": {
+        "Precision@K": 0.0339,
+        "Recall@K": 0.1214,
+        "NDCG@K": 0.0774,
+        "MAP@K": 0.0424,
+        "CatalogCoverage@K": 0.08,
+        "Novelty@K": 5.512,
+        "EvaluatedUsers": 316
+      },
+      "K=20": {
+        "Precision@K": 0.0277,
+        "Recall@K": 0.2001,
+        "NDCG@K": 0.1037,
+        "MAP@K": 0.0496,
+        "CatalogCoverage@K": 0.128,
+        "Novelty@K": 6.0106,
+        "EvaluatedUsers": 316
+      }
+    },
+    "Collaborative Filtering (SVD)": {
+      "K=5": {
+        "Precision@K": 0.0519,
+        "Recall@K": 0.0973,
+        "NDCG@K": 0.0824,
+        "MAP@K": 0.054,
+        "CatalogCoverage@K": 0.488,
+        "Novelty@K": 7.2863,
+        "EvaluatedUsers": 316
+      },
+      "K=10": {
+        "Precision@K": 0.0475,
+        "Recall@K": 0.1804,
+        "NDCG@K": 0.1152,
+        "MAP@K": 0.0652,
+        "CatalogCoverage@K": 0.612,
+        "Novelty@K": 7.424,
+        "EvaluatedUsers": 316
+      },
+      "K=20": {
+        "Precision@K": 0.0345,
+        "Recall@K": 0.2587,
+        "NDCG@K": 0.1411,
+        "MAP@K": 0.072,
+        "CatalogCoverage@K": 0.74,
+        "Novelty@K": 7.6018,
+        "EvaluatedUsers": 316
+      }
+    },
+    "Content-Based (TF-IDF)": {
+      "K=5": {
+        "Precision@K": 0.0348,
+        "Recall@K": 0.0658,
+        "NDCG@K": 0.0515,
+        "MAP@K": 0.0305,
+        "CatalogCoverage@K": 0.948,
+        "Novelty@K": 9.2449,
+        "EvaluatedUsers": 316
+      },
+      "K=10": {
+        "Precision@K": 0.0326,
+        "Recall@K": 0.1242,
+        "NDCG@K": 0.0746,
+        "MAP@K": 0.0381,
+        "CatalogCoverage@K": 0.992,
+        "Novelty@K": 9.2197,
+        "EvaluatedUsers": 316
+      },
+      "K=20": {
+        "Precision@K": 0.0277,
+        "Recall@K": 0.2103,
+        "NDCG@K": 0.103,
+        "MAP@K": 0.0457,
+        "CatalogCoverage@K": 1.0,
+        "Novelty@K": 9.2531,
+        "EvaluatedUsers": 316
+      }
+    },
+    "Hybrid Recommender": {
+      "K=5": {
+        "Precision@K": 0.0437,
+        "Recall@K": 0.0879,
+        "NDCG@K": 0.0741,
+        "MAP@K": 0.0475,
+        "CatalogCoverage@K": 0.904,
+        "Novelty@K": 8.3433,
+        "EvaluatedUsers": 316
+      },
+      "K=10": {
+        "Precision@K": 0.0449,
+        "Recall@K": 0.1731,
+        "NDCG@K": 0.1088,
+        "MAP@K": 0.0596,
+        "CatalogCoverage@K": 0.98,
+        "Novelty@K": 8.021,
+        "EvaluatedUsers": 316
+      },
+      "K=20": {
+        "Precision@K": 0.0397,
+        "Recall@K": 0.2977,
+        "NDCG@K": 0.1503,
+        "MAP@K": 0.0711,
+        "CatalogCoverage@K": 1.0,
+        "Novelty@K": 7.8266,
+        "EvaluatedUsers": 316
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "overview": {
+    "num_products": 250,
+    "num_users": 1200,
+    "num_interactions": 19930,
+    "matrix_sparsity_pct": 96.67,
+    "time_window": "2026-08-07 09:22:27 to 2026-11-18 08:43:49"
+  },
+  "data_quality": {
+    "invalid_user_foreign_keys": 0,
+    "invalid_product_foreign_keys": 0,
+    "duplicate_interactions": 0,
+    "missing_values_products": {
+      "product_id": 0,
+      "title": 0,
+      "category": 0,
+      "subcategory": 0,
+      "brand": 0,
+      "price": 0,
+      "rating_avg": 0,
+      "rating_count": 0,
+      "description": 0,
+      "tags": 0,
+      "is_cold_start_candidate": 0,
+      "created_at": 0
+    },
+    "missing_values_users": {
+      "user_id": 0,
+      "age_group": 0,
+      "gender": 0,
+      "primary_category": 0,
+      "secondary_category": 0,
+      "activity_tier": 0,
+      "expected_interactions": 0,
+      "is_cold_start_candidate": 0,
+      "signup_date": 0
+    },
+    "missing_values_interactions_excl_ratings": {
+      "interaction_id": 0,
+      "user_id": 0,
+      "product_id": 0,
+      "event_type": 0,
+      "session_id": 0,
+      "timestamp": 0
+    },
+    "rating_field_integrity": true
+  },
+  "funnel_distribution": {
+    "counts": {
+      "view": 12420,
+      "cart": 4381,
+      "purchase": 2233,
+      "rating": 896
+    },
+    "percentages": {
+      "view": 62.32,
+      "cart": 21.98,
+      "purchase": 11.2,
+      "rating": 4.5
+    }
+  },
+  "user_activity": {
+    "min": 2,
+    "p25": 5.0,
+    "median": 13.0,
+    "mean": 16.61,
+    "p75": 21.0,
+    "p95": 52.049999999999955,
+    "max": 69,
+    "users_with_under_3_events": 188
+  },
+  "item_popularity": {
+    "min": 2,
+    "p25": 17.25,
+    "median": 41.5,
+    "mean": 79.72,
+    "p75": 93.0,
+    "max": 930,
+    "pareto_share_top_20pct_items": "61.65% of total interaction volume"
+  },
+  "catalog_summary": {
+    "categories": {
+      "Electronics": 42,
+      "Fashion": 42,
+      "Home & Kitchen": 42,
+      "Beauty & Personal Care": 42,
+      "Sports & Fitness": 41,
+      "Books & Stationery": 41
+    },
+    "price_stats": {
+      "min": 12.45,
+      "mean": 88.39,
+      "median": 43.665000000000006,
+      "max": 1037.83,
+      "std": 142.71
+    }
+  },
+  "leakage_assessment": {
+    "is_strictly_chronological": true,
+    "split_recommendation": "Chronological split (train on earliest 70%, val on next 15%, test on final 15%). Strictly avoids future interaction leakage."
+  }
+}
