@@ -26,7 +26,7 @@ Use this pre-formatted template to copy and paste directly into the official Alg
 ### 3. Code and Version
 | Field | Value | Notes |
 | :--- | :--- | :--- |
-| **Repository URL** | `https://github.com/[your-username]/ecommerce-recommender` | Ensure repository is public or invite reviewer |
+| **Repository URL** | `https://github.com/ManikantaPerla07/ecommerce-recommender` | Ensure repository is public or invite reviewer |
 | **Primary Branch** | `main` | Default branch |
 | **Final Commit ID** | `cb6bd9fcdbda79a02bc80b7ec118953eecf8fc65` | Run `git rev-parse HEAD` to verify active commit |
 | **Reviewer Access** | Granted / Public repository | Reviewers will clone and test locally |
@@ -44,9 +44,9 @@ Use this pre-formatted template to copy and paste directly into the official Alg
 ### 5. Documentation
 | Field | Value |
 | :--- | :--- |
-| **README Link** | `https://github.com/[your-username]/ecommerce-recommender/blob/main/README.md` |
-| **Technical Report Link** | `https://github.com/[your-username]/ecommerce-recommender/blob/main/TECHNICAL_REPORT.md` |
-| **Research Notebook Link**| `https://github.com/[your-username]/ecommerce-recommender/blob/main/notebooks/recommendation_engine_analysis.ipynb` |
+| **README Link** | `https://github.com/ManikantaPerla07/ecommerce-recommender/blob/main/README.md` |
+| **Technical Report Link** | `https://github.com/ManikantaPerla07/ecommerce-recommender/blob/main/TECHNICAL_REPORT.md` |
+| **Research Notebook Link**| `https://github.com/ManikantaPerla07/ecommerce-recommender/blob/main/notebooks/recommendation_engine_analysis.ipynb` |
 | **Architecture Diagram** | Included in `README.md` (Mermaid flowchart) and `TECHNICAL_REPORT.md` |
 
 ---
