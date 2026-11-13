@@ -1,13 +1,7 @@
 """
 Interactive Streamlit Web Application for E-Commerce Product Recommendation Engine.
-ALGIONS AI LABS - AI & Machine Learning Advanced Assessment.
-Features:
-- Live Top-N recommendation studio with real model loading
-- Dynamic cold-start simulator
-- Multi-signal explainability inspector (feature signals, CF latent partner, TF-IDF tags)
-- Side-by-side model comparison (Baseline vs CF vs Content vs Hybrid)
-- Offline ranking metrics and business dashboard
-- Responsible AI, bias, and human decision-support controls
+ALGIONS AI LABS — AI & Machine Learning Advanced Assessment.
+High-end modern UI with elevated card components, interactive analytics, and explainability.
 """
 import streamlit as st
 import pandas as pd
@@ -16,74 +10,227 @@ import joblib
 import json
 from pathlib import Path
 
-# Set Page Config
+# Page Config
 st.set_page_config(
-    page_title="ALGIONS AI LABS | E-Commerce Recommender",
+    page_title="Algions AI Labs | Enterprise Recommender",
     page_icon="🛍️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
+# Custom Design System (CSS)
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.1rem;
-        font-weight: 700;
-        color: #1E3A8A;
-        margin-bottom: 0.2rem;
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    * {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    .sub-header {
-        font-size: 1.05rem;
-        color: #4B5563;
-        margin-bottom: 1.5rem;
-    }
-    .metric-card {
+    
+    /* Global styles */
+    .stApp {
         background-color: #F8FAFC;
-        border-radius: 8px;
-        padding: 16px;
+    }
+    
+    /* Header Container */
+    .hero-container {
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #312E81 100%);
+        padding: 28px 36px;
+        border-radius: 16px;
+        color: white;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    }
+    .hero-badge {
+        display: inline-block;
+        background: rgba(99, 102, 241, 0.25);
+        border: 1px solid rgba(129, 140, 248, 0.4);
+        color: #C7D2FE;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 12px;
+    }
+    .hero-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 0 0 8px 0;
+        background: linear-gradient(to right, #FFFFFF, #E2E8F0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+        font-size: 0.98rem;
+        color: #94A3B8;
+        max-width: 800px;
+        line-height: 1.5;
+        margin: 0;
+    }
+    
+    /* Product Card */
+    .product-card {
+        background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
     }
-    .badge-pop {
-        background-color: #FEF3C7;
-        color: #92400E;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.1);
+        border-color: #CBD5E1;
+    }
+    .category-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background-color: #F1F5F9;
+        color: #475569;
+        font-size: 0.72rem;
         font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 6px;
+        margin-bottom: 8px;
     }
-    .badge-cf {
-        background-color: #E0E7FF;
+    .card-title {
+        font-size: 1.02rem;
+        font-weight: 700;
+        color: #0F172A;
+        line-height: 1.35;
+        margin: 4px 0 10px 0;
+        height: 48px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .price-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #F1F5F9;
+    }
+    .price-tag {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0F172A;
+    }
+    .score-badge {
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+    .score-high {
+        background-color: #EEF2FF;
+        color: #4F46E5;
+        border: 1px solid #C7D2FE;
+    }
+    .score-cold {
+        background-color: #FEF2F2;
+        color: #DC2626;
+        border: 1px solid #FECACA;
+    }
+    .signal-text {
+        font-size: 0.75rem;
+        color: #64748B;
+        font-style: italic;
+        margin-top: 8px;
+        display: block;
+    }
+    
+    /* Sidebar Profile Card */
+    .user-profile-box {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .user-avatar-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    .user-tier-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .tier-power {
+        background: #FEF3C7;
+        color: #B45309;
+    }
+    .tier-regular {
+        background: #E0E7FF;
         color: #3730A3;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
     }
-    .badge-content {
-        background-color: #DCFCE7;
-        color: #166534;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    .badge-hybrid {
-        background-color: #F3E8FF;
-        color: #6B21A8;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    .badge-cold {
-        background-color: #FEE2E2;
+    .tier-cold {
+        background: #FEE2E2;
         color: #991B1B;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
+    }
+    
+    /* Explainability Inspector Box */
+    .inspector-box {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 24px;
+        margin-top: 10px;
+    }
+    
+    /* Metric Card */
+    .metric-stat-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 18px 20px;
+        text-align: left;
+    }
+    .stat-label {
+        font-size: 0.78rem;
         font-weight: 600;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .stat-value {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #0F172A;
+        margin: 6px 0 2px 0;
+    }
+    .stat-delta {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #10B981;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -93,7 +240,15 @@ BASE_DIR = Path(__file__).resolve().parent
 ARTIFACTS_DIR = BASE_DIR / "artifacts"
 DATA_DIR = BASE_DIR / "data"
 
-# Cached Artifact Loaders
+CATEGORY_ICONS = {
+    "Electronics": "⚡",
+    "Fashion": "👗",
+    "Home & Kitchen": "🍳",
+    "Beauty & Personal Care": "✨",
+    "Sports & Fitness": "🏋️",
+    "Books & Stationery": "📚"
+}
+
 @st.cache_resource
 def load_all_artifacts():
     models = {
@@ -121,97 +276,113 @@ except Exception as e:
     artifacts_ready = False
     st.error(f"Error loading model artifacts: {e}. Please run `python -m src.train` first.")
 
-# Header
-st.markdown('<div class="main-header">🛍️ ALGIONS AI LABS — E-Commerce Recommendation Engine</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">AI & Machine Learning Advanced Assessment | Decision-Support System with Cold-Start Handling & Multi-Signal Explainability</div>', unsafe_allow_html=True)
+# HERO HEADER
+st.markdown("""
+<div class="hero-container">
+    <div class="hero-badge">Algions AI Labs — Advanced Assessment</div>
+    <div class="hero-title">Enterprise Product Recommendation Engine</div>
+    <p class="hero-subtitle">
+        Decision-support machine learning solution featuring multi-signal hybrid scoring, strict zero-leakage chronological validation, 
+        transparent feature explainability, and dynamic cold-start fallback.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 if artifacts_ready:
-    # Sidebar
-    st.sidebar.image("https://img.icons8.com/color/96/000000/shop.png", width=64)
-    st.sidebar.title("Recommendation Studio")
+    # SIDEBAR CONTROLS
+    st.sidebar.markdown("### 👤 User Persona Simulation")
 
-    # User Selection & Cold Start Simulation
-    user_type = st.sidebar.radio(
-        "User Profile Mode:",
-        ["Warm User (Frequent Shopper)", "Cold-Start User (New / Low Activity)", "Simulate Brand New User"]
+    user_mode = st.sidebar.radio(
+        "Select User Persona:",
+        ["🔥 Power Shopper (Warm Profile)", "❄️ Cold-Start User (Low Activity)", "✨ Brand New Customer (0 Events)"],
+        label_visibility="collapsed"
     )
 
-    if user_type == "Warm User (Frequent Shopper)":
-        power_users = df_users[df_users["activity_tier"] == "power"]["user_id"].tolist()
-        selected_user_id = st.sidebar.selectbox("Select Warm User ID:", power_users, index=0)
-    elif user_type == "Cold-Start User (New / Low Activity)":
-        casual_users = df_users[df_users["activity_tier"] == "casual"]["user_id"].tolist()
-        selected_user_id = st.sidebar.selectbox("Select Cold-Start User ID:", casual_users, index=0)
+    if "Power" in user_mode:
+        candidate_users = df_users[df_users["activity_tier"] == "power"]["user_id"].tolist()
+        selected_user_id = st.sidebar.selectbox("Active User Account:", candidate_users, index=0)
+    elif "Cold-Start" in user_mode:
+        candidate_users = df_users[df_users["activity_tier"] == "casual"]["user_id"].tolist()
+        selected_user_id = st.sidebar.selectbox("Active User Account:", candidate_users, index=0)
     else:
-        selected_user_id = st.sidebar.text_input("Custom User ID (Unseen in Train):", "USER_9999_NEW")
-        custom_pref = st.sidebar.selectbox("Declared Category Preference:", df_products["category"].unique())
+        selected_user_id = st.sidebar.text_input("Custom User ID (Unseen):", "USER_9999_NEW")
 
-    # Get User Details
+    # Render User Card in Sidebar
     user_row = df_users[df_users["user_id"] == selected_user_id]
     if not user_row.empty:
-        user_info = user_row.iloc[0]
-        user_train_events = len(df_train[df_train["user_id"] == selected_user_id])
+        u_info = user_row.iloc[0]
+        n_train = len(df_train[df_train["user_id"] == selected_user_id])
+        tier = u_info["activity_tier"].upper()
+        tier_class = "tier-power" if tier == "POWER" else ("tier-regular" if tier == "REGULAR" else "tier-cold")
+        
         st.sidebar.markdown(f"""
-        **User Metadata:**
-        - **Primary Interest:** `{user_info['primary_category']}`
-        - **Secondary Interest:** `{user_info['secondary_category']}`
-        - **Age Group:** `{user_info['age_group']}`
-        - **Training Interactions:** `{user_train_events} events`
-        - **Status:** `{'❄️ Cold-Start' if user_train_events <= 2 else '🔥 Warm User'}`
-        """)
+        <div class="user-profile-box">
+            <div class="user-avatar-row">
+                <div class="user-avatar">{selected_user_id[-2:]}</div>
+                <div>
+                    <strong style="color: #0F172A; font-size: 0.95rem;">{selected_user_id}</strong><br>
+                    <span class="user-tier-badge {tier_class}">{tier} USER</span>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #475569; line-height: 1.6;">
+                🎯 <b>Primary Affinity:</b> {u_info['primary_category']}<br>
+                ✨ <b>Secondary:</b> {u_info['secondary_category']}<br>
+                📊 <b>Past History:</b> {n_train} events recorded
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        user_train_events = 0
         st.sidebar.markdown(f"""
-        **User Metadata:**
-        - **Simulated Profile:** `Completely Unseen`
-        - **Training Interactions:** `0 events`
-        - **Status:** `❄️ Brand-New Cold-Start`
-        """)
+        <div class="user-profile-box">
+            <div class="user-avatar-row">
+                <div class="user-avatar" style="background: #EF4444;">NEW</div>
+                <div>
+                    <strong style="color: #0F172A; font-size: 0.95rem;">{selected_user_id}</strong><br>
+                    <span class="user-tier-badge tier-cold">COLD START</span>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: #475569; line-height: 1.6;">
+                🎯 <b>Status:</b> Zero Historical Interactions<br>
+                🛡️ <b>Engine Fallback:</b> Activated
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Model and Filter Options
     st.sidebar.markdown("---")
-    selected_model_key = st.sidebar.selectbox(
-        "Active Recommendation Model:",
-        [
-            "Hybrid Recommender (Recommended)",
-            "Collaborative Filtering (SVD)",
-            "Content-Based (TF-IDF)",
-            "Popularity Baseline"
-        ],
-        index=0
-    )
+    st.sidebar.markdown("### ⚙️ Engine Configuration")
 
-    model_key_map = {
-        "Hybrid Recommender (Recommended)": "hybrid",
-        "Collaborative Filtering (SVD)": "collaborative",
-        "Content-Based (TF-IDF)": "content",
-        "Popularity Baseline": "popularity"
+    model_options = {
+        "✨ Hybrid Recommender (Optimal & Dynamic)": "hybrid",
+        "🤝 Collaborative Filtering (TruncatedSVD)": "collaborative",
+        "📝 Content-Based (TF-IDF Semantic Matching)": "content",
+        "🏆 Popularity Baseline (Engagement Prior)": "popularity"
     }
-    active_key = model_key_map[selected_model_key]
+    selected_model_label = st.sidebar.selectbox("Active Recommendation Model:", list(model_options.keys()))
+    active_model_key = model_options[selected_model_label]
 
-    top_k = st.sidebar.slider("Top-N Items:", min_value=3, max_value=20, value=8, step=1)
-    categories = ["All Categories"] + list(df_products["category"].unique())
-    selected_category = st.sidebar.selectbox("Filter Category:", categories)
-    cat_filter = None if selected_category == "All Categories" else selected_category
-    exclude_seen = st.sidebar.checkbox("Exclude previously viewed/purchased items", value=True)
+    top_k = st.sidebar.slider("Recommendations Count (Top-N):", min_value=4, max_value=16, value=8, step=4)
+    all_cats = ["All Categories"] + list(df_products["category"].unique())
+    selected_cat = st.sidebar.selectbox("Category Filter:", all_cats)
+    cat_filter = None if selected_cat == "All Categories" else selected_cat
+    exclude_seen = st.sidebar.toggle("Suppress Previously Interacted Items", value=True)
 
-    # Tabs
+    # NAVIGATION TABS
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "🎯 Recommendations Showcase",
-        "🔍 Explainability & Feature Signals",
-        "⚖️ Side-by-Side Model Comparison",
-        "📊 Offline Metrics & Benchmark",
-        "🛡️ Responsible AI & Decision Support"
+        "🎯 Discovery Feed",
+        "🔍 Explainability Inspector",
+        "⚖️ Multi-Model Benchmarking",
+        "📊 Offline Evaluation Metrics",
+        "🛡️ Merchandiser Governance"
     ])
 
-    # TAB 1: RECOMMENDATIONS SHOWCASE
+    # TAB 1: DISCOVERY FEED
     with tab1:
-        st.subheader(f"Personalized Recommendations for `{selected_user_id}`")
-        st.caption(f"Engine: **{selected_model_key}** | Top-{top_k} items | Category: **{selected_category}**")
+        st.markdown(f"#### Personalized Feed for `{selected_user_id}`")
+        st.caption(f"Engine: **{selected_model_label}** | Showing Top **{top_k}** items | Scope: **{selected_cat}**")
 
-        model = models[active_key]
+        model = models[active_model_key]
 
-        # Generate real recommendations
+        # Generate real predictions
         recs = model.recommend(
             user_id=selected_user_id,
             top_k=top_k,
@@ -219,9 +390,9 @@ if artifacts_ready:
             category_filter=cat_filter
         )
 
-        # Fallback if CF has zero recommendations for cold user
-        if not recs and active_key == "collaborative":
-            st.warning("⚠️ Collaborative Filtering cannot generate predictions for this user because they have 0 interactions in the training matrix. Showing Popularity Baseline fallback.")
+        # Fallback if CF has zero predictions for cold user
+        if not recs and active_model_key == "collaborative":
+            st.warning("⚠️ Collaborative Filtering cannot score this user due to zero matrix presence. Displaying Popularity Baseline fallback.")
             recs = models["popularity"].recommend(
                 user_id=selected_user_id,
                 top_k=top_k,
@@ -232,184 +403,244 @@ if artifacts_ready:
                 r["is_cold_fallback"] = True
 
         if not recs:
-            st.info("No recommendations match the current filter criteria.")
+            st.info("No items match your active filter criteria.")
         else:
             cols = st.columns(4)
             for idx, item in enumerate(recs):
                 col = cols[idx % 4]
+                icon = CATEGORY_ICONS.get(item["category"], "🛍️")
+                is_cold = item.get("is_cold_fallback", False)
+                score_pct = int(round(item["score"] * 100))
+                
                 with col:
-                    with st.container():
-                        st.markdown(f"""
-                        <div class="metric-card">
-                            <span class="{'badge-cold' if item.get('is_cold_fallback') else 'badge-hybrid'}">
-                                {'❄️ Cold Fallback' if item.get('is_cold_fallback') else '✨ Score: ' + str(round(item['score'], 3))}
+                    st.markdown(f"""
+                    <div class="product-card">
+                        <div class="category-pill">{icon} {item['category']}</div>
+                        <div class="card-title" title="{item['title']}">{item['title']}</div>
+                        <div class="price-row">
+                            <span class="price-tag">${item['price']:.2f}</span>
+                            <span class="score-badge {'score-cold' if is_cold else 'score-high'}">
+                                {'❄️ Fallback' if is_cold else f'✨ {score_pct}% Match'}
                             </span>
-                            <h4 style="margin: 8px 0 4px 0; font-size: 1rem;">{item['title'][:48]}...</h4>
-                            <p style="color: #6B7280; font-size: 0.85rem; margin-bottom: 4px;">🏷️ {item['category']}</p>
-                            <p style="font-size: 1.1rem; font-weight: bold; color: #111827; margin-bottom: 6px;">${item['price']:.2f}</p>
-                            <p style="font-size: 0.78rem; color: #4B5563; font-style: italic;">{item.get('signal', 'Recommended item')}</p>
                         </div>
-                        """, unsafe_allow_html=True)
-                        st.write("")
+                        <span class="signal-text">{item.get('signal', 'Recommended based on behavioral profile')}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-    # TAB 2: EXPLAINABILITY & FEATURE SIGNALS
+    # TAB 2: EXPLAINABILITY INSPECTOR
     with tab2:
-        st.subheader("Decision-Support Explainability & Feature Signal Inspector")
-        st.write("Inspect exactly why a specific product was recommended to the user, the underlying algorithmic weights, keyword overlaps, and uncertainty factors.")
+        st.markdown("#### Decision-Support Feature Signal Inspector")
+        st.write("Inspect how the ensemble synthesized feature signals, keyword overlaps, and latent affinity for any item.")
 
-        col_ex1, col_ex2 = st.columns([1, 2])
-        with col_ex1:
-            product_list = [r["product_id"] for r in recs] if recs else df_products["product_id"].head(10).tolist()
-            chosen_prod_id = st.selectbox("Select Product to Inspect:", product_list)
-
-            prod_detail = df_products[df_products["product_id"] == chosen_prod_id].iloc[0]
+        c_prod, c_inspect = st.columns([1, 2])
+        
+        with c_prod:
+            item_candidates = [r["product_id"] for r in recs] if recs else df_products["product_id"].head(8).tolist()
+            inspected_pid = st.selectbox("Select Recommended Product:", item_candidates)
+            
+            p_data = df_products[df_products["product_id"] == inspected_pid].iloc[0]
             st.markdown(f"""
-            **Product Details:**
-            - **Title:** {prod_detail['title']}
-            - **Category:** {prod_detail['category']} / {prod_detail['subcategory']}
-            - **Brand:** {prod_detail['brand']}
-            - **Price:** ${prod_detail['price']:.2f}
-            - **Catalog Tags:** `{prod_detail['tags']}`
-            """)
+            <div class="product-card" style="margin-top: 10px;">
+                <div class="category-pill">{CATEGORY_ICONS.get(p_data['category'], '🛍️')} {p_data['category']}</div>
+                <div style="font-weight: 700; font-size: 1.1rem; color: #0F172A; margin: 6px 0;">{p_data['title']}</div>
+                <div style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;"><b>Brand:</b> {p_data['brand']} | <b>Price:</b> ${p_data['price']:.2f}</div>
+                <div style="font-size: 0.8rem; color: #64748B; background: #F8FAFC; padding: 10px; border-radius: 8px;">
+                    <b>Catalog Tags:</b><br>{p_data['tags']}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        with col_ex2:
-            explanation = models["hybrid"].explain(selected_user_id, chosen_prod_id)
-
-            st.markdown("#### Rationale Synthesis")
-            st.info(f"💡 {explanation['synthesis_summary']}")
-
-            # Score Breakdown
+        with c_inspect:
+            explanation = models["hybrid"].explain(selected_user_id, inspected_pid)
             sub = explanation["sub_scores"]
             w = explanation["weights_used"]
 
-            st.markdown("#### Multi-Signal Score Breakdown")
+            st.markdown("""
+            <div style="background: #EEF2FF; border: 1px solid #C7D2FE; border-radius: 10px; padding: 14px 18px; margin-bottom: 16px;">
+                <span style="font-weight: 700; color: #3730A3;">💡 Algorithmic Rationale:</span>
+                <p style="margin: 4px 0 0 0; color: #1E1B4B; font-size: 0.92rem;">""" + explanation['synthesis_summary'] + """</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Attribution Cards
             c1, c2, c3, c4 = st.columns(4)
-            c1.metric("Hybrid Score", f"{explanation['hybrid_score']:.3f}")
-            c2.metric("CF Score (Weight: " + str(w['collaborative']) + ")", f"{sub['collaborative_filtering']:.3f}")
-            c3.metric("Content Score (Weight: " + str(w['content']) + ")", f"{sub['content_based']:.3f}")
-            c4.metric("Popularity (Weight: " + str(w['popularity']) + ")", f"{sub['popularity_baseline']:.3f}")
+            c1.markdown(f"""
+            <div class="metric-stat-card">
+                <div class="stat-label">Hybrid Score</div>
+                <div class="stat-value">{explanation['hybrid_score']:.3f}</div>
+                <div class="stat-delta">Ensemble Score</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            c2.markdown(f"""
+            <div class="metric-stat-card">
+                <div class="stat-label">CF Signal ({int(w['collaborative']*100)}%)</div>
+                <div class="stat-value">{sub['collaborative_filtering']:.3f}</div>
+                <div class="stat-delta">Latent Match</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            # Latent Match & Keyword Match
-            cf_part = explanation["sub_explanations"]["collaborative"]
-            ct_part = explanation["sub_explanations"]["content"]
+            c3.markdown(f"""
+            <div class="metric-stat-card">
+                <div class="stat-label">Content ({int(w['content']*100)}%)</div>
+                <div class="stat-value">{sub['content_based']:.3f}</div>
+                <div class="stat-delta">TF-IDF Overlap</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            st.markdown("---")
-            col_cf_exp, col_ct_exp = st.columns(2)
-            with col_cf_exp:
+            c4.markdown(f"""
+            <div class="metric-stat-card">
+                <div class="stat-label">Popularity ({int(w['popularity']*100)}%)</div>
+                <div class="stat-value">{sub['popularity_baseline']:.3f}</div>
+                <div class="stat-delta">Platform Prior</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Deep signals
+            col_cf_sig, col_ct_sig = st.columns(2)
+            with col_cf_sig:
                 st.markdown("**🤝 Collaborative Co-Interaction Signal:**")
-                st.write(cf_part.get("reason", "N/A"))
-
-            with col_ct_exp:
-                st.markdown("**📝 Content Semantic Keywords:**")
-                keywords = ct_part.get("matched_keywords", [])
-                if keywords:
-                    st.write("Top matched keyword drivers: " + ", ".join([f"`{k}`" for k in keywords]))
+                st.caption(explanation["sub_explanations"]["collaborative"].get("reason", "N/A"))
+            
+            with col_ct_sig:
+                st.markdown("**📝 Content Semantic Driver Keywords:**")
+                matched_kws = explanation["sub_explanations"]["content"].get("matched_keywords", [])
+                if matched_kws:
+                    kw_badges = " ".join([f"<span class='category-pill'>#{kw}</span>" for kw in matched_kws])
+                    st.markdown(kw_badges, unsafe_allow_html=True)
                 else:
-                    st.write(ct_part.get("reason", "N/A"))
+                    st.caption("General category-level alignment")
 
-            # Uncertainty & Limitation Notice
-            st.warning(f"⚠️ **Human Review Notice:** {explanation['decision_support_limitations']}")
+            st.warning(f"🛡️ **Decision-Support Notice:** {explanation['decision_support_limitations']}")
 
-    # TAB 3: SIDE-BY-SIDE MODEL COMPARISON
+    # TAB 3: SIDE-BY-SIDE MODEL BENCHMARKING
     with tab3:
-        st.subheader("Side-by-Side Model Comparison")
-        st.write("Examine how different algorithms respond to the same user profile and catalog constraints.")
+        st.markdown("#### Side-by-Side Algorithmic Comparison")
+        st.write("Compare how each algorithm personalizes discovery for the active user profile.")
 
-        col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+        m_cols = st.columns(4)
+        
+        with m_cols[0]:
+            st.markdown("""
+            <div style="background: #FEF3C7; color: #92400E; padding: 10px; border-radius: 8px 8px 0 0; font-weight: 700; text-align: center;">
+                🏆 Popularity Baseline
+            </div>
+            """, unsafe_allow_html=True)
+            p_recs = models["popularity"].recommend(selected_user_id, top_k=5, exclude_interacted=exclude_seen)
+            for r in p_recs:
+                st.markdown(f"""
+                <div style="background: white; border: 1px solid #E2E8F0; padding: 10px; margin-top: 6px; border-radius: 6px; font-size: 0.85rem;">
+                    <b>{r['title'][:28]}...</b><br>
+                    <span style="color: #64748B;">Score: {r['score']:.2f} | ${r['price']:.2f}</span>
+                </div>
+                """, unsafe_allow_html=True)
 
-        with col_m1:
-            st.markdown("### 🏆 Popularity Baseline")
-            st.caption("Global / category engagement prior")
-            pop_recs = models["popularity"].recommend(selected_user_id, top_k=5, exclude_interacted=exclude_seen)
-            for r in pop_recs:
-                st.markdown(f"- **{r['title'][:32]}...** (${r['price']:.2f})")
-
-        with col_m2:
-            st.markdown("### 🤝 Collaborative (SVD)")
-            st.caption("Latent taste factor dot-product")
+        with m_cols[1]:
+            st.markdown("""
+            <div style="background: #E0E7FF; color: #3730A3; padding: 10px; border-radius: 8px 8px 0 0; font-weight: 700; text-align: center;">
+                🤝 Collaborative (SVD)
+            </div>
+            """, unsafe_allow_html=True)
             cf_recs = models["collaborative"].recommend(selected_user_id, top_k=5, exclude_interacted=exclude_seen)
             if cf_recs:
                 for r in cf_recs:
-                    st.markdown(f"- **{r['title'][:32]}...** (${r['price']:.2f})")
+                    st.markdown(f"""
+                    <div style="background: white; border: 1px solid #E2E8F0; padding: 10px; margin-top: 6px; border-radius: 6px; font-size: 0.85rem;">
+                        <b>{r['title'][:28]}...</b><br>
+                        <span style="color: #64748B;">Score: {r['score']:.2f} | ${r['price']:.2f}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
             else:
-                st.error("Cold user: 0 recommendations (Requires fallback)")
+                st.error("Cold User: 0 recommendations (Requires Fallback)")
 
-        with col_m3:
-            st.markdown("### 📝 Content-Based (TF-IDF)")
-            st.caption("Semantic attribute alignment")
+        with m_cols[2]:
+            st.markdown("""
+            <div style="background: #DCFCE7; color: #166534; padding: 10px; border-radius: 8px 8px 0 0; font-weight: 700; text-align: center;">
+                📝 Content-Based (TF-IDF)
+            </div>
+            """, unsafe_allow_html=True)
             ct_recs = models["content"].recommend(selected_user_id, top_k=5, exclude_interacted=exclude_seen)
             for r in ct_recs:
-                st.markdown(f"- **{r['title'][:32]}...** (${r['price']:.2f})")
+                st.markdown(f"""
+                <div style="background: white; border: 1px solid #E2E8F0; padding: 10px; margin-top: 6px; border-radius: 6px; font-size: 0.85rem;">
+                    <b>{r['title'][:28]}...</b><br>
+                    <span style="color: #64748B;">Score: {r['score']:.2f} | ${r['price']:.2f}</span>
+                </div>
+                """, unsafe_allow_html=True)
 
-        with col_m4:
-            st.markdown("### ✨ Hybrid Recommender")
-            st.caption("Dynamic ensemble + cold-start fallback")
+        with m_cols[3]:
+            st.markdown("""
+            <div style="background: #F3E8FF; color: #6B21A8; padding: 10px; border-radius: 8px 8px 0 0; font-weight: 700; text-align: center;">
+                ✨ Hybrid Recommender
+            </div>
+            """, unsafe_allow_html=True)
             hyb_recs = models["hybrid"].recommend(selected_user_id, top_k=5, exclude_interacted=exclude_seen)
             for r in hyb_recs:
-                st.markdown(f"- **{r['title'][:32]}...** (${r['price']:.2f})")
+                st.markdown(f"""
+                <div style="background: white; border: 1px solid #E2E8F0; padding: 10px; margin-top: 6px; border-radius: 6px; font-size: 0.85rem;">
+                    <b>{r['title'][:28]}...</b><br>
+                    <span style="color: #64748B;">Score: {r['score']:.2f} | ${r['price']:.2f}</span>
+                </div>
+                """, unsafe_allow_html=True)
 
-    # TAB 4: OFFLINE METRICS & BENCHMARK
+    # TAB 4: OFFLINE EVALUATION METRICS
     with tab4:
-        st.subheader("Held-Out Chronological Test Benchmark")
-        st.write("Strictly evaluated on interactions occurring strictly after the training & validation cutoff time.")
+        st.markdown("#### Held-Out Chronological Test Benchmark")
+        st.write("Strictly evaluated on the final 15% chronological window (`2026-11-10` to `2026-11-18`), held out completely from training and tuning.")
 
         if eval_metrics:
-            m_data = eval_metrics["overall"]
-            summary_table = []
-            for m_name, vals in m_data.items():
+            overall_rows = []
+            for m_name, vals in eval_metrics["overall"].items():
                 v = vals["K=10"]
-                summary_table.append({
-                    "Model": m_name,
-                    "Precision@10": v["Precision@K"],
-                    "Recall@10": v["Recall@K"],
+                overall_rows.append({
+                    "Recommendation Model": m_name,
                     "NDCG@10": v["NDCG@K"],
-                    "MAP@10": v["MAP@K"],
+                    "Recall@10": v["Recall@K"],
+                    "Precision@10": v["Precision@K"],
                     "Catalog Coverage (%)": round(v["CatalogCoverage@K"] * 100, 1),
                     "Novelty (Bits)": v["Novelty@K"]
                 })
-            df_summary = pd.DataFrame(summary_table).set_index("Model")
-            st.table(df_summary)
+            df_m = pd.DataFrame(overall_rows).set_index("Recommendation Model")
+            st.dataframe(df_m, use_container_width=True)
 
-            st.markdown("#### Ranking Quality vs Catalog Discovery Trade-off")
-            chart_df = df_summary[["NDCG@10", "Recall@10", "Precision@10"]]
-            st.bar_chart(chart_df)
+            c_ch1, c_ch2 = st.columns(2)
+            with c_ch1:
+                st.markdown("**Ranking Accuracy Lift (NDCG@10 & Recall@10):**")
+                st.bar_chart(df_m[["NDCG@10", "Recall@10"]])
+            
+            with c_ch2:
+                st.markdown("**Catalog Health: Coverage vs Popularity Monopolization:**")
+                st.bar_chart(df_m[["Catalog Coverage (%)"]])
 
-            st.markdown("#### Cold-Start Users Evaluation (Users with ≤ 2 Training Interactions)")
-            cold_data = eval_metrics["cold_start"]
-            cold_table = []
-            for m_name, vals in cold_data.items():
+            st.markdown("---")
+            st.markdown("#### Cold-Start Users Test Slice (Users with ≤ 2 Training Events)")
+            cold_rows = []
+            for m_name, vals in eval_metrics["cold_start"].items():
                 v = vals["K=10"]
-                cold_table.append({
-                    "Model": m_name,
-                    "Precision@10": v["Precision@K"],
-                    "Recall@10": v["Recall@K"],
-                    "NDCG@10": v["NDCG@K"],
-                    "Coverage (%)": round(v["CatalogCoverage@K"] * 100, 1)
+                cold_rows.append({
+                    "Recommendation Model": m_name,
+                    "Cold NDCG@10": v["NDCG@K"],
+                    "Cold Recall@10": v["Recall@K"],
+                    "Cold Coverage (%)": round(v["CatalogCoverage@K"] * 100, 1)
                 })
-            st.table(pd.DataFrame(cold_table).set_index("Model"))
-        else:
-            st.info("Run `python -m src.evaluate` to generate the evaluation benchmark.")
+            st.dataframe(pd.DataFrame(cold_rows).set_index("Recommendation Model"), use_container_width=True)
 
-    # TAB 5: RESPONSIBLE AI & DECISION SUPPORT
+    # TAB 5: MERCHANDISER GOVERNANCE
     with tab5:
-        st.subheader("Responsible AI, Failure Modes, and Human Oversight")
+        st.markdown("#### Decision-Support Governance & Safe Production Deployment")
         st.markdown("""
-        ### Decision-Support Framing
-        This recommendation engine is strictly engineered as a **decision-support and product discovery aid**, rather than an autonomous decision maker.
+        ### Human-in-the-Loop Architecture
+        The recommendation engine is an **advisory intelligence layer** designed to assist category merchandisers and shoppers, not to operate autonomously.
         
-        #### 1. Failure Modes & Limitations:
-        - **Cold-Start Degradation:** Collaborative filtering exhibits a hard failure mode for new users. The Hybrid engine catches this via dynamic rule-based fallbacks to Content and Popularity.
-        - **Popularity Bias & Filter Bubbles:** Popularity baselines create an echo chamber (8% catalog coverage), starving niche long-tail products. The Hybrid engine achieves 98% coverage with controlled novelty.
-        - **Session Intent Drift:** A user viewing baby clothes for a gift does not permanently become a baby clothing shopper. Models must allow real-time session overrides.
+        #### 1. Cold-Start Safety Net:
+        - Automatically detects users with $\le 2$ interactions and adjusts weights from Collaborative Filtering to Content-Based category matching and trending popular products.
         
-        #### 2. Bias, Fairness & Privacy:
-        - **No PII or Sensitive Demographics:** The models do not train on personal names, email addresses, credit card numbers, or protected traits.
-        - **Implicit Confidence Weighting:** Rather than assuming equal intent, views are weighted lightly (1.0), carts (2.5), and purchases (5.0).
+        #### 2. Popularity Bias & Long-Tail Catalog Health:
+        - Pure popularity models trap customers in an echo chamber, recommending only 8% of the inventory.
+        - The Hybrid engine achieves **98% catalog coverage**, ensuring discovery for new products and niche sellers.
         
-        #### 3. Human-in-the-Loop Safeguards:
-        - E-commerce merchandisers and category managers maintain manual boosting and suppressive rules.
-        - Out-of-stock items and compliance-restricted products are filtered at the inference gate before presentation.
+        #### 3. Privacy Preservation:
+        - Zero Personally Identifiable Information (PII) is stored or ingested. The engine operates purely on anonymous session tokens and behavioral event sequences.
         """)
-
-else:
-    st.warning("Please run the training pipeline to generate model artifacts: `python -m src.train`")
