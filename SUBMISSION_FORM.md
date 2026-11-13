@@ -28,7 +28,7 @@ Use this pre-formatted template to copy and paste directly into the official Alg
 | :--- | :--- | :--- |
 | **Repository URL** | `https://github.com/[your-username]/ecommerce-recommender` | Ensure repository is public or invite reviewer |
 | **Primary Branch** | `main` | Default branch |
-| **Final Commit ID** | `[git rev-parse HEAD]` | Run `git log -1 --format="%H"` to copy exact hash |
+| **Final Commit ID** | `0874363496a3079d7f10441f3fd7de6d09db6891` | Run `git log -1 --format="%H"` to verify |
 | **Reviewer Access** | Granted / Public repository | Reviewers will clone and test locally |
 
 ---
