@@ -603,7 +603,7 @@ if artifacts_ready:
                     "Novelty (Bits)": v["Novelty@K"]
                 })
             df_m = pd.DataFrame(overall_rows).set_index("Recommendation Model")
-            st.dataframe(df_m, use_container_width=True)
+            st.dataframe(df_m, width="stretch")
 
             c_ch1, c_ch2 = st.columns(2)
             with c_ch1:
@@ -625,7 +625,7 @@ if artifacts_ready:
                     "Cold Recall@10": v["Recall@K"],
                     "Cold Coverage (%)": round(v["CatalogCoverage@K"] * 100, 1)
                 })
-            st.dataframe(pd.DataFrame(cold_rows).set_index("Recommendation Model"), use_container_width=True)
+            st.dataframe(pd.DataFrame(cold_rows).set_index("Recommendation Model"), width="stretch")
 
     # TAB 5: MERCHANDISER GOVERNANCE
     with tab5:
